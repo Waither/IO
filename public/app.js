@@ -23,13 +23,30 @@ async function loadOrders(){
   const orders = await api('GET','/api/queries/orders');
   const body = document.getElementById('orders-body');
   body.innerHTML = '';
-  orders.forEach(o=>{
-    const tr=document.createElement('tr');
-    tr.innerHTML=`<td>${o.order_id}</td><td>${o.status}</td><td>${o.created_at}</td>`;
+  orders.forEach(o => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${o.order_id}</td>
+      <td>${o.status}</td>
+      <td>${o.created_at}</td>
+      <td>
+        ${o.status === 'submitted'
+          ? `<button class="btn-validate" data-id="${o.order_id}">Zweryfikuj</button>`
+          : ''}
+      </td>`;
     body.appendChild(tr);
   });
 }
 document.getElementById('reload-orders').onclick=loadOrders;
+
+document.querySelectorAll('.btn-validate').forEach(btn=>{
+  btn.onclick = async () => {
+    const orderId = btn.dataset.id;
+    const res = await api('POST', '/api/commands/validate-order', { orderId });
+    console.log(res);
+    loadOrders();           // odśwież listę, by status zmienił się na „validated”
+  };
+});
 
 // 2. Nowe zlecenie
 document.getElementById('form-new-order').onsubmit = async e=>{

@@ -18,6 +18,10 @@ $commandBus = new CommandBus([
     'cmd'=> AssignDriverCommand::class,
     'handler'=> App\CommandHandler\AssignDriverHandler::class
   ],
+  'POST:/api/commands/validate-order' => [
+    'cmd'     => \App\Command\ValidateOrderCommand::class,
+    'handler' => \App\CommandHandler\ValidateOrderHandler::class,
+  ],
 ]);
 
 $queryBus = new QueryBus([
