@@ -2,7 +2,7 @@ FROM mysql:8.0
 
 # Ustawienia środowiskowe
 ENV MYSQL_ROOT_PASSWORD=rootpassword
-ENV MYSQL_DATABASE=to_projekt
+ENV MYSQL_DATABASE=spedycja
 ENV MYSQL_USER=user
 ENV MYSQL_PASSWORD=password
 

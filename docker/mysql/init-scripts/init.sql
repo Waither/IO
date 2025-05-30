@@ -28,3 +28,15 @@ CREATE TABLE `driver_assignments` (
   PRIMARY KEY (`driver_id`,`order_id`),
   INDEX `idx_assignment_status` (`status`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Przykładowe dane do tabeli order_list
+INSERT INTO `order_list` (`order_id`, `status`, `created_at`)
+VALUES
+  ('order-1', 'NEW', NOW()),
+  ('order-2', 'ASSIGNED', NOW());
+
+-- Przykładowe dane do tabeli driver_assignments
+INSERT INTO `driver_assignments` (`driver_id`, `order_id`, `status`)
+VALUES
+  ('driver-1', 'order-1', 'ASSIGNED'),
+  ('driver-2', 'order-2', 'PENDING');

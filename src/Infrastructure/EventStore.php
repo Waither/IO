@@ -4,7 +4,7 @@ use PDO;
 
 class EventStore {
   public static function append(object $event): void {
-    $pdo = new PDO('mysql:host=mysql;dbname=spedycja','spedycja_user','secretpassword');
+    $pdo = new PDO('mysql:host=mysql;dbname=to_projekt', 'user', 'password');
     $stmt = $pdo->prepare(
       'INSERT INTO events (aggregate_id,type,payload,created_at) VALUES 
        (:id,:type,:payload,NOW())'
