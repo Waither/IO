@@ -1,146 +1,89 @@
 <!DOCTYPE html>
 <html lang="pl">
 <head>
-  <meta charset="UTF-8">
-  <title>Demo CQRS – Spedycja</title>
-  <style>
-    body { font-family: sans-serif; margin: 0; padding: 0; }
-    nav { background: #333; color: #fff; padding: .5em; }
-    nav a { color: #fff; margin-right: 1em; text-decoration: none; }
-    section { padding: 1em; display: none; }
-    section.active { display: block; }
-    table { width: 100%; border-collapse: collapse; margin-top: .5em; }
-    th, td { border: 1px solid #ccc; padding: .5em; text-align: left; }
-    form > div { margin-bottom: .5em; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Demo CQRS – Spedycja</title>
+    <style>
+        section { padding: 1em; display: none; }
+        section.active { display: block; }
+    </style>
+    <link rel="stylesheet" href="icons/fontawesome-free-6.7.2-web/css/all.min.css">
+    <link rel="stylesheet" href="mdb/css/mdb.min.css">
+    <script src="app.js" type="module"></script>
 </head>
 <body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="orders">Zlecenia</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="new-order">Nowe Zlecenie</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="assign-driver">Przypisanie Kierowcy</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-target="driver-view">Widok Kierowcy</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
 
-<nav>
-  <a href="#" data-target="orders">Zlecenia</a>
-  <a href="#" data-target="new-order">Nowe Zlecenie</a>
-  <a href="#" data-target="assign-driver">Przypisanie Kierowcy</a>
-  <a href="#" data-target="driver-view">Widok Kierowcy</a>
-</nav>
+    <main>
+         <!-- DODANIE NOWEGO ZLECENIA -->
+        <section id="new-order">
+            <h2>Nowe Zlecenie</h2>
+            <form id="form-new-order">
+                <div><label>ID: <input name="orderId" required></label></div>
+                <div><label>Miejsce odbioru: <input name="pickup" required></label></div>
+                <div><label>Miejsce dostawy: <input name="delivery" required></label></div>
+                <div><label>Ładunek: <input name="cargo" required></label></div>
+                <button type="submit">Wyślij</button>
+            </form>
+            <pre id="new-order-result"></pre>
+        </section>
 
-<main>
-  <!-- LISTA ZLECEŃ -->
-  <section id="orders">
-    <h2>Lista Zleceń</h2>
-    <button id="reload-orders">Odśwież</button>
-    <table>
-      <thead>
-        <tr><th>ID</th><th>Status</th><th>Utworzono</th></tr>
-      </thead>
-      <tbody id="orders-body"></tbody>
-    </table>
-  </section>
+        <!-- LISTA ZLECEŃ -->
+        <section id="orders">
+            <h2>Lista Zleceń</h2>
+            <button id="reload-orders" class="btn btn-primary">Odśwież</button>
+            <table class="table">
+                <thead>
+                    <tr><th>ID</th><th>Status</th><th>Utworzono</th><th style="width: 200px;"></th></tr>
+                </thead>
+                <tbody id="orders-body"></tbody>
+            </table>
+        </section>
 
-  <!-- DODANIE NOWEGO ZLECENIA -->
-  <section id="new-order">
-    <h2>Nowe Zlecenie</h2>
-    <form id="form-new-order">
-      <div><label>ID: <input name="orderId" required></label></div>
-      <div><label>Miejsce odbioru: <input name="pickup" required></label></div>
-      <div><label>Miejsce dostawy: <input name="delivery" required></label></div>
-      <div><label>Ładunek: <input name="cargo" required></label></div>
-      <button type="submit">Wyślij</button>
-    </form>
-    <pre id="new-order-result"></pre>
-  </section>
+        <!-- PRZYPISANIE KIEROWCY -->
+        <section id="assign-driver">
+            <h2>Przypisanie Kierowcy</h2>
+            <form id="form-assign-driver">
+                <div><label>ID zlecenia: <input name="orderId" required></label></div>
+                <div><label>ID kierowcy: <input name="driverId" required></label></div>
+                <button type="submit">Przypisz</button>
+            </form>
+            <pre id="assign-driver-result"></pre>
+        </section>
 
-  <!-- PRZYPISANIE KIEROWCY -->
-  <section id="assign-driver">
-    <h2>Przypisanie Kierowcy</h2>
-    <form id="form-assign-driver">
-      <div><label>ID zlecenia: <input name="orderId" required></label></div>
-      <div><label>ID kierowcy: <input name="driverId" required></label></div>
-      <button type="submit">Przypisz</button>
-    </form>
-    <pre id="assign-driver-result"></pre>
-  </section>
-
-  <!-- PANEL KIEROWCY -->
-  <section id="driver-view">
-    <h2>Przydziały Kierowcy</h2>
-    <form id="form-driver-view">
-      <div><label>ID kierowcy: <input name="driverId" required></label></div>
-      <button type="submit">Pokaż</button>
-    </form>
-    <table>
-      <thead><tr><th>Zlecenie</th><th>Status</th></tr></thead>
-      <tbody id="driver-body"></tbody>
-    </table>
-  </section>
-</main>
-
-<script>
-  // prosta nawigacja
-  document.querySelectorAll('nav a').forEach(a=>{
-    a.addEventListener('click', e=>{
-      e.preventDefault();
-      document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
-      document.getElementById(a.dataset.target).classList.add('active');
-    });
-  });
-  // uruchomiamy widok Zleceń jako domyślny
-  document.querySelector('nav a[data-target="orders"]').click();
-
-  // helper do fetch + JSON
-  async function call(method, url, data) {
-    const opts = { method, headers:{} };
-    if (data) {
-      opts.headers['Content-Type'] = 'application/json';
-      opts.body = JSON.stringify(data);
-    }
-    const resp = await fetch(url, opts);
-    return resp.json();
-  }
-
-  // 1. LISTA ZLECEŃ
-  async function loadOrders() {
-    const orders = await call('GET','/api/queries/orders');
-    const body = document.getElementById('orders-body');
-    body.innerHTML = '';
-    orders.forEach(o=>{
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${o.order_id}</td><td>${o.status}</td><td>${o.created_at}</td>`;
-      body.appendChild(tr);
-    });
-  }
-  document.getElementById('reload-orders').onclick = loadOrders;
-
-  // 2. NOWE ZLECENIE
-  document.getElementById('form-new-order').addEventListener('submit', async e=>{
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target));
-    const res  = await call('POST','/api/commands/submit-order', data);
-    document.getElementById('new-order-result').textContent = JSON.stringify(res, null, 2);
-    loadOrders();
-  });
-
-  // 3. PRZYPISANIE KIEROWCY
-  document.getElementById('form-assign-driver').addEventListener('submit', async e=>{
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(e.target));
-    const res  = await call('POST','/api/commands/assign-driver', data);
-    document.getElementById('assign-driver-result').textContent = JSON.stringify(res, null, 2);
-  });
-
-  // 4. PANEL KIEROWCY
-  document.getElementById('form-driver-view').addEventListener('submit', async e=>{
-    e.preventDefault();
-    const {driverId} = Object.fromEntries(new FormData(e.target));
-    const assignments = await call('GET',`/api/queries/driver-assign?driverId=${driverId}`);
-    const body = document.getElementById('driver-body');
-    body.innerHTML = '';
-    assignments.forEach(a=>{
-      const tr = document.createElement('tr');
-      tr.innerHTML = `<td>${a.order_id}</td><td>${a.status}</td>`;
-      body.appendChild(tr);
-    });
-  });
-</script>
-
+        <!-- PANEL KIEROWCY -->
+        <section id="driver-view">
+            <h2>Przydziały Kierowcy</h2>
+            <form id="form-driver-view">
+                <div><label>ID kierowcy: <input name="driverId" required></label></div>
+                <button type="submit">Pokaż</button>
+            </form>
+            <table class="table">
+                <thead><tr><th>Zlecenie</th><th>Status</th></tr></thead>
+                <tbody id="driver-body"></tbody>
+            </table>
+        </section>
+    </main>
 </body>
 </html>
