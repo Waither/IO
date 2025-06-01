@@ -1,23 +1,12 @@
-// Initialization for ES Users
-import { Dropdown, Collapse, initMDB } from "./mdb/js/mdb.es.min.js";
+import { Input, Modal, Ripple, Dropdown, Collapse, initMDB } from "./mdb/js/mdb.es.min.js";
 
-
+'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initMDB({ Dropdown, Collapse });
+    initMDB({ Input, Dropdown, Collapse, Modal, Ripple });
 
-    document.querySelectorAll('nav a').forEach(a=>{
-        a.addEventListener('click', e=>{
-        e.preventDefault();
-        document.querySelectorAll('main section').forEach(s=>s.classList.remove('active'));
-        document.getElementById(a.dataset.target).classList.add('active');
-        });
-    });
-
-    document.querySelector('nav a[data-target="orders"]').click();
     loadOrders();
 
-    // prosta nav
     document.querySelectorAll('nav button').forEach(btn=>{
         btn.onclick = e=>{
             document.querySelectorAll('main section').forEach(s=>s.hidden=true);
@@ -26,15 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     document.getElementById('reload-orders').onclick=loadOrders;
-
-    // 2. Nowe zlecenie
-    document.getElementById('form-new-order').onsubmit = async e=>{
-        e.preventDefault();
-        const data=Object.fromEntries(new FormData(e.target));
-        const res=await api('POST','/api/commands/submit-order',data);
-        document.getElementById('new-order-result').textContent=JSON.stringify(res,null,2);
-        loadOrders();
-    };
 
     // 3. Przypisanie kierowcy
     document.getElementById('form-assign-driver').onsubmit = async e=>{
@@ -57,6 +37,21 @@ document.addEventListener('DOMContentLoaded', () => {
             body.appendChild(tr);
         });
     };
+
+    document.getElementById("nav-addForm").addEventListener("click", () => {
+        showModal("views/addForm.html").then(loadContent).then(() => {
+            const form = document.querySelector("#form-new-order");
+            form.onsubmit = async e => {
+                e.preventDefault();
+                const data = Object.fromEntries(new FormData(form));
+                console.log(data);
+                const res = await api('POST', '/api/commands/submit-order', data);
+                log(res);
+                loadOrders();
+                hideModal();
+            };
+        });
+    });
 });
 
 async function api(method, url, data) {
@@ -95,5 +90,41 @@ async function loadOrders(){
             console.log(res);
             loadOrders();           // odśwież listę, by status zmienił się na „validated”
         };
+    });
+}
+
+async function showModal(url, id = 'modalForm') {
+    const modal = document.getElementById(id);
+    if (modal) {
+        modal.innerHTML = '';
+        const res = await fetch(url);
+        const html = await res.text();
+        modal.innerHTML = html;
+        const instance = new Modal(modal, {
+            backdrop: 'static',
+            keyboard: false
+        });
+        instance.show();
+    }
+}
+
+async function hideModal(id = 'modalForm') {
+    const modal = document.getElementById(id);
+    if (modal) {
+        const instance = Modal.getInstance(modal);
+        instance.hide();
+        setTimeout(() => {
+            instance.dispose();
+        }, 500);
+    }
+}
+
+async function log(message) {
+    console.log("Wynik operacji: ", message);
+}
+
+async function loadContent() {
+    document.querySelectorAll(".form-outline").forEach(input => {
+        new Input(input);
     });
 }

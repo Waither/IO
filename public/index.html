@@ -3,10 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>Demo CQRS – Spedycja</title>
-    <style>
-        section { padding: 1em; display: none; }
-        section.active { display: block; }
-    </style>
     <link rel="stylesheet" href="icons/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="mdb/css/mdb.min.css">
     <script src="app.js" type="module"></script>
@@ -22,7 +18,7 @@
                         <a class="nav-link" href="#" data-target="orders">Zlecenia</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-target="new-order">Nowe Zlecenie</a>
+                        <a id="nav-addForm" class="nav-link" href="#" data-target="new-order">Nowe Zlecenie</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-target="assign-driver">Przypisanie Kierowcy</a>
@@ -35,31 +31,14 @@
         </div>
     </nav>
 
-    <main>
-         <!-- DODANIE NOWEGO ZLECENIA -->
-        <section id="new-order">
-            <h2>Nowe Zlecenie</h2>
-            <form id="form-new-order">
-                <div><label>ID: <input name="orderId" required></label></div>
-                <div><label>Miejsce odbioru: <input name="pickup" required></label></div>
-                <div><label>Miejsce dostawy: <input name="delivery" required></label></div>
-                <div><label>Ładunek: <input name="cargo" required></label></div>
-                <button type="submit">Wyślij</button>
-            </form>
-            <pre id="new-order-result"></pre>
-        </section>
-
-        <!-- LISTA ZLECEŃ -->
-        <section id="orders">
-            <h2>Lista Zleceń</h2>
-            <button id="reload-orders" class="btn btn-primary">Odśwież</button>
-            <table class="table">
-                <thead>
-                    <tr><th>ID</th><th>Status</th><th>Utworzono</th><th style="width: 200px;"></th></tr>
-                </thead>
-                <tbody id="orders-body"></tbody>
-            </table>
-        </section>
+    <main class="p-3">
+        <button id="reload-orders" class="btn btn-primary">Odśwież</button>
+        <table class="table">
+            <thead>
+                <tr><th>ID</th><th>Status</th><th>Utworzono</th><th style="width: 200px;"></th></tr>
+            </thead>
+            <tbody id="orders-body"></tbody>
+        </table>
 
         <!-- PRZYPISANIE KIEROWCY -->
         <section id="assign-driver">
@@ -84,6 +63,8 @@
                 <tbody id="driver-body"></tbody>
             </table>
         </section>
+        
     </main>
+    <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true"></div>
 </body>
 </html>
