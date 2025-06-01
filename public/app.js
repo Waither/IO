@@ -7,13 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     loadOrders();
 
-    document.querySelectorAll('nav button').forEach(btn=>{
-        btn.onclick = e=>{
-            document.querySelectorAll('main section').forEach(s=>s.hidden=true);
-            document.getElementById(btn.dataset.target).hidden=false;
-        };
-    });
-
     document.getElementById('reload-orders').onclick=loadOrders;
 
     // 3. Przypisanie kierowcy
