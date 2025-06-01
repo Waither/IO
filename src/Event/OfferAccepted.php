@@ -1,8 +1,7 @@
 <?php
 namespace App\Event;
 
-class OfferAccepted
-{
+class OfferAccepted {
     public function __construct(
         public string $orderId,
         public string $clientId

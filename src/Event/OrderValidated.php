@@ -1,9 +1,8 @@
 <?php
 namespace App\Event;
 
-class OrderValidated
-{
+class OrderValidated {
     public function __construct(
         public string $orderId
-    ){}
+    ) {}
 }

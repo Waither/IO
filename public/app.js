@@ -27,15 +27,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('reload-orders').onclick=loadOrders;
 
-    document.querySelectorAll('.btn-validate').forEach(btn=>{
-        btn.onclick = async () => {
-            const orderId = btn.dataset.id;
-            const res = await api('POST', '/api/commands/validate-order', { orderId });
-            console.log(res);
-            loadOrders();           // odśwież listę, by status zmienił się na „validated”
-        };
-    });
-
     // 2. Nowe zlecenie
     document.getElementById('form-new-order').onsubmit = async e=>{
         e.preventDefault();
@@ -95,5 +86,14 @@ async function loadOrders(){
             : ''}
         </td>`;
         body.appendChild(tr);
+    });
+
+    document.querySelectorAll('.btn-validate').forEach(btn=>{
+        btn.onclick = async () => {
+            const orderId = btn.dataset.id;
+            const res = await api('POST', '/api/commands/validate-order', { orderId });
+            console.log(res);
+            loadOrders();           // odśwież listę, by status zmienił się na „validated”
+        };
     });
 }

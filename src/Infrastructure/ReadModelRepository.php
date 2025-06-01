@@ -1,10 +1,12 @@
 <?php
 namespace App\Infrastructure;
+use App\Connection;
 use PDO;
 
 class ReadModelRepository {
-  public static function fetchAll(string $table): array {
-    $pdo = new PDO('mysql:host=mysql;dbname=to_projekt', 'user', 'password');
-    return $pdo->query("SELECT * FROM $table")->fetchAll(PDO::FETCH_ASSOC);
-  }
+    public static function fetchAll(string $table): array {
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->query("SELECT * FROM $table");
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

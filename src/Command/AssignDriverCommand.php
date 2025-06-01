@@ -2,8 +2,8 @@
 namespace App\Command;
 
 class AssignDriverCommand {
-  public function __construct(
-    public string $orderId,
-    public string $driverId
-  ){}
+    public function __construct(
+        public string $orderId,
+        public string $driverId
+    ) {}
 }

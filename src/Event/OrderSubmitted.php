@@ -1,8 +1,7 @@
 <?php
 namespace App\Event;
 
-class OrderSubmitted
-{
+class OrderSubmitted {
     public function __construct(
         public string $orderId,
         public string $pickup,

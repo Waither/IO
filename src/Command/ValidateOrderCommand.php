@@ -1,9 +1,8 @@
 <?php
 namespace App\Command;
 
-class ValidateOrderCommand
-{
+class ValidateOrderCommand {
     public function __construct(
         public string $orderId
-    ){}
+    ) {}
 }
