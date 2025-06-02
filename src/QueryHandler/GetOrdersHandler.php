@@ -2,10 +2,14 @@
 namespace App\QueryHandler;
 
 use App\Query\GetOrdersQuery;
-use App\Infrastructure\ReadModelRepository;
+use App\Connection;
+use PDO;
 
 class GetOrdersHandler {
     public function handle(GetOrdersQuery $q): array {
-        return ReadModelRepository::fetchAll('order_list');
+        $pdo = Connection::getInstance();
+        $stmt = $pdo->prepare('SELECT ID_order, name_status AS status, location_from, location_to, cargo, ID_driver, created_at FROM order_list NATURAL JOIN status;');
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

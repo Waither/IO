@@ -7,13 +7,13 @@ use App\Connection;
 class OrderListProjection {
     public static function onOrderSubmitted(OrderSubmitted $e): void {
         $pdo = Connection::getInstance();
-        $stmt= $pdo->prepare('INSERT INTO order_list (order_id, status, created_at) VALUES (:id, :st, NOW())');
-        $stmt->execute([':id' => $e->orderId, ':st' => 'submitted']);
+        $stmt= $pdo->prepare('INSERT INTO order_list (location_from, location_to, cargo) VALUES (:from, :to, :cargo)');
+        $stmt->execute([':from' => $e->pickup, ':to' => $e->delivery, ':cargo' => $e->cargo, ]);
     }
     
   public static function onOrderValidated(OrderValidated $e): void {
         $pdo = Connection::getInstance();
-        $stmt = $pdo->prepare('UPDATE order_list SET status = :status WHERE order_id = :id');
-        $stmt->execute([':status' => 'validated', ':id' => $e->orderId]);
+        $stmt = $pdo->prepare('UPDATE order_list SET status = 2 WHERE ID_order = :id');
+        $stmt->execute([':id' => $e->orderId]);
     }
 }

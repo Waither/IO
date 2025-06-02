@@ -53,7 +53,8 @@ try {
         $res   = $queryBus->dispatch($dto, $cfg['handler']);
     }
     else {
-        http_response_code(404); exit('Not Found');
+        http_response_code(404);
+        exit('Not Found');
     }
 
     header('Content-Type: application/json');

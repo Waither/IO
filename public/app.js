@@ -31,13 +31,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    document.getElementById("nav-addForm").addEventListener("click", () => {
-        showModal("views/addForm.html").then(loadContent).then(() => {
+    // Dodawanie nowego zlecenia
+    document.getElementById("nav-addForm").addEventListener("click", async () => {
+        showModal("views/addForm.php").then(loadContent).then(() => {
             const form = document.querySelector("#form-new-order");
             form.onsubmit = async e => {
                 e.preventDefault();
                 const data = Object.fromEntries(new FormData(form));
-                console.log(data);
                 const res = await api('POST', '/api/commands/submit-order', data);
                 log(res);
                 loadOrders();
@@ -50,42 +50,50 @@ document.addEventListener('DOMContentLoaded', () => {
 async function api(method, url, data) {
     const opts = { method, headers:{} };
     if (data) {
-        opts.headers['Content-Type']='application/json';
-        opts.body=JSON.stringify(data);
+        opts.headers['Content-Type'] = 'application/json';
+        opts.body = JSON.stringify(data);
     }
     const res = await fetch(url, opts);
-    return res.json();
+    const text = await res.text();
+    try {
+        return JSON.parse(text);
+    }
+    catch (e) {
+        console.error('API response is not valid JSON:', text);
+        return null;
+    }
 }
 
-// 1. Lista zleceń
-async function loadOrders(){
+// Lista zleceń
+async function loadOrders() {
     const orders = await api('GET','/api/queries/orders');
     const body = document.getElementById('orders-body');
     body.innerHTML = '';
     orders.forEach(o => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `
-        <td>${o.order_id}</td>
-        <td>${o.status}</td>
-        <td>${o.created_at}</td>
-        <td>
-            ${o.status === 'submitted'
-            ? `<button class="btn-validate btn btn-secondary" data-id="${o.order_id}">Zweryfikuj</button>`
-            : ''}
-        </td>`;
+        tr.innerHTML = `<td>${o.ID_order}</td><td>${o.status}</td><td>${o.location_from}</td><td>${o.location_to}</td><td>${o.cargo}</td><td>${o.ID_driver ?? "-"}</td><td>${o.created_at}</td>`;
+        tr.addEventListener('click', () => { acceptOrder(o) });
         body.appendChild(tr);
     });
 
-    document.querySelectorAll('.btn-validate').forEach(btn=>{
-        btn.onclick = async () => {
-            const orderId = btn.dataset.id;
-            const res = await api('POST', '/api/commands/validate-order', { orderId });
-            console.log(res);
-            loadOrders();           // odśwież listę, by status zmienił się na „validated”
-        };
+    // document.querySelectorAll('.btn-validate').forEach(btn=>{
+    //     btn.onclick = async () => {
+    //         const orderId = btn.dataset.id;
+    //         const res = await api('POST', '/api/commands/validate-order', { orderId });
+    //         console.log(res);
+    //         loadOrders();
+    //     };
+    // });
+}
+
+// Akceptacja zlecenia
+async function acceptOrder(order) {
+    showModal(`views/orderDetails.php?order=${JSON.stringify(order)}`).then(loadContent).then(() => {
+        
     });
 }
 
+// Funkcje pomocnicze
 async function showModal(url, id = 'modalForm') {
     const modal = document.getElementById(id);
     if (modal) {
@@ -117,7 +125,7 @@ async function log(message) {
 }
 
 async function loadContent() {
-    document.querySelectorAll(".form-outline").forEach(input => {
+    document.querySelectorAll(".form-outline:not([data-mdb-input-initialized='true'])").forEach(input => {
         new Input(input);
     });
 }

@@ -5,6 +5,7 @@
     <title>Demo CQRS – Spedycja</title>
     <link rel="stylesheet" href="icons/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="mdb/css/mdb.min.css">
+    <link rel="stylesheet" href="style.css">
     <script src="app.js" type="module"></script>
 </head>
 <body>
@@ -15,16 +16,10 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="#" data-target="orders">Zlecenia</a>
+                        <a id="nav-addForm" class="nav-link" href="#" data-target="new-order"><i class="fas fa-circle-plus me-1"></i>Nowe Zlecenie</a>
                     </li>
                     <li class="nav-item">
-                        <a id="nav-addForm" class="nav-link" href="#" data-target="new-order">Nowe Zlecenie</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-target="assign-driver">Przypisanie Kierowcy</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#" data-target="driver-view">Widok Kierowcy</a>
+                        <a id="nav-driver" class="nav-link" href="#" data-target="driver-view"><i class="fas fa-truck me-1"></i>Widok Kierowcy</a>
                     </li>
                 </ul>
             </div>
@@ -33,12 +28,14 @@
 
     <main class="p-3">
         <button id="reload-orders" class="btn btn-primary">Odśwież</button>
-        <table class="table">
-            <thead>
-                <tr><th>ID</th><th>Status</th><th>Utworzono</th><th style="width: 200px;"></th></tr>
-            </thead>
-            <tbody id="orders-body"></tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr><th>ID</th><th>Status</th><th>Miejsce odbioru</th><th>Miejsce dostawy</th><th>Ładunek</th><th>Kierowca</th><th>Data utworzenia</th></tr>
+                </thead>
+                <tbody id="orders-body"></tbody>
+            </table>
+        </div>
 
         <!-- PRZYPISANIE KIEROWCY -->
         <section id="assign-driver">
