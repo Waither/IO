@@ -3,10 +3,7 @@ namespace App\Event;
 
 class OfferAccepted {
     public function __construct(
-        public string $company,
-        public string $pickup,
-        public string $delivery,
-        public string $cargo,
-        public string $weight
+        public string $orderId,
+        public string $clientId
     ) {}
 }

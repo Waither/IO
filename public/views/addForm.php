@@ -7,9 +7,10 @@
             </div>
             <div class="modal-body">
                 <div class="d-flex flex-column gap-3">
-                    <div id="async" class="form-outline autocomplete" data-mdb-input-init>
-                        <input type="text" id="company" class="form-control">
+                    <div id="async" class="form-outline mb-2 autocomplete" data-mdb-input-init>
+                        <input type="text" id="company" class="form-control" name="company" required data-mdb-showcounter="true" maxlength="100">
                         <label class="form-label" for="company">Firma</label>
+                        <div class="form-helper"></div>
                     </div>
                     <div class="input-group mb-2">
                         <div class="form-outline" data-mdb-input-init>
@@ -32,7 +33,7 @@
                             <div class="form-helper"></div>
                         </div>
                         <div class="form-outline" data-mdb-input-init>
-                            <input type="number" id="weight" class="form-control" name="pickup" min="0" step="0.001" max="100000" required>
+                            <input type="number" id="weight" class="form-control" name="weight" min="0" step="0.001" max="100000" required>
                             <label class="form-label" for="weight">Waga</label>
                         </div>
                         <span class="input-group-text">kg</span>
