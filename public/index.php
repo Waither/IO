@@ -8,6 +8,8 @@ use App\Command\SubmitOrderCommand;
 use App\Command\AssignDriverCommand;
 use App\Query\GetOrdersQuery;
 use App\Query\GetDriverAssignmentsQuery;
+use App\Query\GetDriversQuery;
+use App\Query\GetCompaniesQuery;
 
 $commandBus = new CommandBus([
     'POST:/api/commands/submit-order'  => [
@@ -32,6 +34,14 @@ $queryBus = new QueryBus([
     'GET:/api/queries/driver-assign'=> [
         'qry'=> GetDriverAssignmentsQuery::class,
         'handler'=> App\QueryHandler\GetDriverAssignmentsHandler::class
+    ],
+    'GET:/api/queries/drivers' => [
+        'qry'    => GetDriversQuery::class,
+        'handler'=> \App\QueryHandler\GetDriversHandler::class,
+    ],
+    'GET:/api/queries/companies/' => [
+        'qry'    => GetCompaniesQuery::class,
+        'handler'=> \App\QueryHandler\GetCompaniesHandler::class,
     ],
 ]);
 

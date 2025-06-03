@@ -1,13 +1,15 @@
-import { Input, Modal, Ripple, Dropdown, Collapse, initMDB } from "./mdb/js/mdb.es.min.js";
+import { Input, Autocomplete, Modal, Ripple, Dropdown, Collapse, initMDB } from "./mdb/js/mdb.es.min.js";
+
+initMDB({ Input, Autocomplete, Modal, Ripple, Dropdown, Collapse });
 
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-    initMDB({ Input, Dropdown, Collapse, Modal, Ripple });
+    
 
     loadOrders();
 
-    document.getElementById('reload-orders').onclick=loadOrders;
+    document.getElementById('reload-orders').onclick = loadOrders;
 
     // 3. Przypisanie kierowcy
     document.getElementById('form-assign-driver').onsubmit = async e=>{
@@ -34,12 +36,39 @@ document.addEventListener('DOMContentLoaded', () => {
     // Dodawanie nowego zlecenia
     document.getElementById("nav-addForm").addEventListener("click", async () => {
         showModal("views/addForm.php").then(loadContent).then(() => {
+            const autocompleteData = [];
+
+            const asyncAutocomplete = document.querySelector('#async');
+            const asyncFilter = async (query) => {
+                const url = `/api/queries/companies/?search=${encodeURI(query)}`;
+                const response = await fetch(url);
+                const data = await response.json();
+                return data;
+            };
+
+            const dataFilter = (value) => {
+                return autocompleteData.filter((item) => {
+                    return item.toLowerCase().startsWith(value.toLowerCase());
+                });
+            };
+
+            asyncFilter('').then(data => {
+                autocompleteData.push(...data);
+                new Autocomplete(asyncAutocomplete, {
+                    filter: dataFilter,
+                    container: "#modalForm"
+                });
+            });
+
             const form = document.querySelector("#form-new-order");
             form.onsubmit = async e => {
                 e.preventDefault();
                 const data = Object.fromEntries(new FormData(form));
                 const res = await api('POST', '/api/commands/submit-order', data);
                 log(res);
+                if (res.error) {
+                    return;
+                }
                 loadOrders();
                 hideModal();
             };
@@ -71,25 +100,21 @@ async function loadOrders() {
     body.innerHTML = '';
     orders.forEach(o => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${o.ID_order}</td><td>${o.status}</td><td>${o.location_from}</td><td>${o.location_to}</td><td>${o.cargo}</td><td>${o.ID_driver ?? "-"}</td><td>${o.created_at}</td>`;
+        tr.innerHTML = `<td>${o.ID_order}</td><td>${o.status}</td><td>${o.company}</td><td>${o.location_from}</td><td>${o.location_to}</td><td>${o.cargo}</td><td>${o.ID_driver ?? "-"}</td><td>${o.created_at}</td>`;
         tr.addEventListener('click', () => { acceptOrder(o) });
         body.appendChild(tr);
     });
-
-    // document.querySelectorAll('.btn-validate').forEach(btn=>{
-    //     btn.onclick = async () => {
-    //         const orderId = btn.dataset.id;
-    //         const res = await api('POST', '/api/commands/validate-order', { orderId });
-    //         console.log(res);
-    //         loadOrders();
-    //     };
-    // });
 }
 
 // Akceptacja zlecenia
 async function acceptOrder(order) {
     showModal(`views/orderDetails.php?order=${JSON.stringify(order)}`).then(loadContent).then(() => {
-        
+        document.getElementById("").onclick = async () => {
+            const orderId = btn.dataset.id;
+            const res = await api('POST', '/api/commands/validate-order', { orderId });
+            console.log(res);
+            loadOrders();
+        };
     });
 }
 
