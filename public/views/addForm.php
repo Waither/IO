@@ -38,8 +38,6 @@
                         </div>
                         <span class="input-group-text">kg</span>
                     </div>
-                    
-                    
                 </div>
             </div>
             <div class="modal-footer justify-content-end">

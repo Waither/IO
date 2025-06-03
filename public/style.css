@@ -1,3 +1,7 @@
 tbody>tr:hover {
     cursor: pointer;
 }
+
+#select-wrapper-driverId {
+    width: 100%;
+}

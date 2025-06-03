@@ -1,4 +1,10 @@
 <?php
+    require __DIR__ . '/../../vendor/autoload.php';
+
+    use App\Query\GetDriversQuery;
+    use App\QueryHandler\GetDriversHandler;
+
+
     if (!isset($_GET["order"])) {
         header("Location: /");
         exit();
@@ -17,7 +23,7 @@
                     <div class="row">
                         <div class="col-md-6 mb-2">
                             <h5 class="text-center fw-bold mb-0">Firma</h5>
-                            <h5 class="text-center"></h5>
+                            <h5 class="text-center"><?= $order["company"]; ?></h5>
                         </div>
 
                         <div class="col-md-6 mb-2">
@@ -38,14 +44,44 @@
                     </div>
 
                     <div class="row">
-                        <div class="col-md-6 mb-2">
-
-                        </div>
-
-                        <div class="col-md-6 mb-2">
-                            
+                        <div class="12 mb-2">
+                            <h5 class="text-center fw-bold">Ładunek</h5>
+                            <div class="input-group">
+                                <div class="input-group-text w-100"><div class="w-100 text-center fw-bold"><?= $order["cargo"]; ?></div></div>
+                                <div class="input-group-text w-100"><div class="w-100 text-center fw-bold"><?= $order["weight"]; ?></div></div>
+                                <span class="input-group-text fw-bold">kg</span>
+                            </div>
                         </div>
                     </div>
+
+                    <?php
+                        if ($order["status"] == "Zatwierdzone przez spedytora" && $order["driver"] == null) {
+                            ?>
+                            <input type="hidden" name="orderId" value="<?= $order["ID_order"]; ?>">
+                            <div class="row mt-5">
+                                <div class="col-12 mb-2">
+                                    <h5 class="text-center fw-bold">Wybór kierowcy</h5>
+                                    <div class="input-group mb-3">
+                                        <select id="driverId" class="w-100" name="driverId" data-mdb-select-init data-mdb-filter="true" required>
+                                            <option value="" selected hidden disabled></option>
+                                            <?php
+                                                $query = new GetDriversQuery();
+                                                $handler = new GetDriversHandler();
+                                                $drivers = $handler->handle($query);
+                                                foreach ($drivers as $driver) {
+                                                    ?>
+                                                    <option value="<?= $driver["ID_driver"]; ?>"><?= $driver["name_driver"]; ?></option>
+                                                    <?php
+                                                }
+                                            ?>
+                                        </select>
+                                        <button type="submit" class="btn btn-success">Przypisz</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    ?>
                 </div>
             </div>
             <?php

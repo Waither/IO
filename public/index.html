@@ -31,36 +31,11 @@
         <div class="table-responsive">
             <table class="table table-hover">
                 <thead>
-                    <tr><th>ID</th><th>Status</th><th>Firma</th><th>Miejsce odbioru</th><th>Miejsce dostawy</th><th>Ładunek</th><th>Kierowca</th><th>Data utworzenia</th></tr>
+                    <tr><th>ID</th><th>Status</th><th>Firma</th><th>Miejsce odbioru</th><th>Miejsce dostawy</th><th>Ładunek</th><th>Waga</th><th>Kierowca</th><th>Data utworzenia</th></tr>
                 </thead>
                 <tbody id="orders-body"></tbody>
             </table>
         </div>
-
-        <!-- PRZYPISANIE KIEROWCY -->
-        <section id="assign-driver">
-            <h2>Przypisanie Kierowcy</h2>
-            <form id="form-assign-driver">
-                <div><label>ID zlecenia: <input name="orderId" required></label></div>
-                <div><label>ID kierowcy: <input name="driverId" required></label></div>
-                <button type="submit">Przypisz</button>
-            </form>
-            <pre id="assign-driver-result"></pre>
-        </section>
-
-        <!-- PANEL KIEROWCY -->
-        <section id="driver-view">
-            <h2>Przydziały Kierowcy</h2>
-            <form id="form-driver-view">
-                <div><label>ID kierowcy: <input name="driverId" required></label></div>
-                <button type="submit">Pokaż</button>
-            </form>
-            <table class="table">
-                <thead><tr><th>Zlecenie</th><th>Status</th></tr></thead>
-                <tbody id="driver-body"></tbody>
-            </table>
-        </section>
-        
     </main>
     <div class="modal fade" id="modalForm" tabindex="-1" aria-labelledby="modalFormLabel" aria-hidden="true"></div>
 </body>
