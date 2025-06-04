@@ -55,14 +55,54 @@
                     </div>
 
                     <?php
-                        if ($order["status"] == "Zatwierdzone przez spedytora" && $order["driver"] == null) {
+                        if ($order["price"] != null) {
+                            ?>
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <h5 class="text-center fw-bold">Cena</h5>
+                                    <h5 class="text-center"><?= $order["price"]; ?> PLN</h5>
+                                </div>
+                            </div>
+                            <?php
+                        }
+
+                        if ($order["driver"] != null) {
+                            ?>
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <h5 class="text-center fw-bold">Kierowca</h5>
+                                    <h5 class="text-center"><?= $order["driver"]; ?></h5>
+                                </div>
+                            </div>
+                            <?php
+                        }
+
+                        if ($_COOKIE["user_spedycja"] == "Spedytor" && $order["status"] == "Utworzone") {
+                            ?>
+                            <input type="hidden" name="orderId" value="<?= $order["ID_order"]; ?>">
+                            <div class="row mt-5">
+                                <div class="col-12 mb-2">
+                                    <h5 class="text-center fw-bold">Spedytor</h5>
+                                    <div class="input-group mb-3">
+                                        <span class="input-group-text fw-bold">Cena</span>
+                                        <div class="form-outline" data-mdb-input-init>
+                                            <input type="number" id="price" class="form-control" name="price" min="0" step="0.01" required>
+                                        </div>
+                                        <span class="input-group-text fw-bold">PLN</span>
+                                        <button type="submit" class="btn btn-success fw-bold" style="width: 220px;" data-mdb-ripple-init><i class="fas fa-check me-1"></i>Akceptuj</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                        elseif ($_COOKIE["user_spedycja"] == "Spedytor" && ($order["status"] == "Zatwierdzone przez spedytora" || $order["status"] == "Zaakceptowane przez klienta") && $order["driver"] == null) {
                             ?>
                             <input type="hidden" name="orderId" value="<?= $order["ID_order"]; ?>">
                             <div class="row mt-5">
                                 <div class="col-12 mb-2">
                                     <h5 class="text-center fw-bold">Wybór kierowcy</h5>
                                     <div class="input-group mb-3">
-                                        <select id="driverId" class="w-100" name="driverId" data-mdb-select-init data-mdb-filter="true" required>
+                                        <select id="driverId" class="w-100" name="driverId" data-mdb-select-init data-mdb-filter="true">
                                             <option value="" selected hidden disabled></option>
                                             <?php
                                                 $query = new GetDriversQuery();
@@ -81,17 +121,22 @@
                             </div>
                             <?php
                         }
+                        elseif ($_COOKIE["user_spedycja"] == "Klient" && $order["status"] == "Zatwierdzone przez spedytora") {
+                            ?>
+                            <input type="hidden" name="orderId" value="<?= $order["ID_order"]; ?>">
+                            <div class="row mt-5">
+                                <div class="col-12 mb-2">
+                                    <h5 class="text-center fw-bold">Akceptacja zlecenia</h5>
+                                    <button type="submit" class="btn btn-success w-100" data-mdb-ripple-init><i class="fas fa-check me-1"></i>Akceptuj</button>
+                                </div>
+                            </div>
+                            <?php
+                        }
                     ?>
                 </div>
             </div>
             <?php
-                if ($order["status"] == "Utworzone") {
-                    ?>
-                    <div class="modal-footer justify-content-end">
-                        <button type="submit" class="btn btn-success fw-bold" data-mdb-ripple-init><i class="fas fa-check me-1"></i>Akceptuj</button>
-                    </div>
-                    <?php
-                }
+                
             ?>
         </div>
     </div>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: mysql:3306
--- Generation Time: Cze 03, 2025 at 11:00 PM
+-- Generation Time: Cze 04, 2025 at 07:29 PM
 -- Wersja serwera: 8.0.42
 -- Wersja PHP: 8.2.27
 
@@ -139,7 +139,12 @@ INSERT INTO `events` (`id`, `type`, `payload`, `created_at`) VALUES
 (20, 'App\\Event\\DriverAssigned', '{\"orderId\": \"2\", \"driverId\": \"2\"}', '2025-06-03 22:55:33'),
 (21, 'App\\Event\\OrderValidated', '{\"orderId\": \"3\"}', '2025-06-03 22:55:37'),
 (22, 'App\\Event\\DriverAssigned', '{\"orderId\": \"2\", \"driverId\": \"2\"}', '2025-06-03 22:55:58'),
-(23, 'App\\Event\\DriverAssigned', '{\"orderId\": \"2\", \"driverId\": \"2\"}', '2025-06-03 22:58:13');
+(23, 'App\\Event\\DriverAssigned', '{\"orderId\": \"2\", \"driverId\": \"2\"}', '2025-06-03 22:58:13'),
+(24, 'App\\Event\\OrderValidated', '{\"price\": 0.48, \"orderId\": \"4\"}', '2025-06-04 18:14:12'),
+(25, 'App\\Event\\OrderValidated', '{\"price\": 1000, \"orderId\": \"1\"}', '2025-06-04 18:16:31'),
+(26, 'App\\Event\\OrderValidated', '{\"price\": 1500, \"orderId\": \"2\"}', '2025-06-04 18:17:09'),
+(27, 'App\\Event\\OrderAccepted', '{\"orderId\": \"2\"}', '2025-06-04 18:37:42'),
+(28, 'App\\Event\\OrderValidated', '{\"price\": 1500, \"orderId\": \"4\"}', '2025-06-04 18:38:03');
 
 -- --------------------------------------------------------
 
@@ -155,6 +160,7 @@ CREATE TABLE `order_list` (
   `location_to` varchar(100) NOT NULL,
   `cargo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `weight` float NOT NULL,
+  `price` float DEFAULT NULL,
   `ID_driver` int DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -163,11 +169,11 @@ CREATE TABLE `order_list` (
 -- Zrzut danych tabeli `order_list`
 --
 
-INSERT INTO `order_list` (`ID_order`, `ID_status`, `ID_company`, `location_from`, `location_to`, `cargo`, `weight`, `ID_driver`, `created_at`) VALUES
-(1, 2, 1, 'Berlin', 'Warszawa', 'skrzydło wiatraku', 40000, 1, '2025-06-02 22:19:02'),
-(2, 2, 2, 'Warszawa', 'Kraków', 'wrotki', 22000, 2, '2025-06-02 22:47:17'),
-(3, 2, 3, 'test', 'test', 'test', 0.001, NULL, '2025-06-03 21:40:23'),
-(4, 1, 3, '22', '42', '52', 0.005, NULL, '2025-06-03 22:54:50');
+INSERT INTO `order_list` (`ID_order`, `ID_status`, `ID_company`, `location_from`, `location_to`, `cargo`, `weight`, `price`, `ID_driver`, `created_at`) VALUES
+(1, 2, 1, 'Berlin', 'Warszawa', 'skrzydło wiatraku', 40000, 1000, 1, '2025-06-02 22:19:02'),
+(2, 3, 2, 'Warszawa', 'Kraków', 'wrotki', 22000, 1500, NULL, '2025-06-02 22:47:17'),
+(3, 1, 3, 'test', 'test', 'test', 0.001, NULL, NULL, '2025-06-03 21:40:23'),
+(4, 2, 3, '22', '42', '52', 0.005, 1500, NULL, '2025-06-03 22:54:50');
 
 -- --------------------------------------------------------
 
@@ -247,7 +253,7 @@ ALTER TABLE `driver`
 -- AUTO_INCREMENT dla tabeli `events`
 --
 ALTER TABLE `events`
-  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `id` bigint NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT dla tabeli `order_list`

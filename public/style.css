@@ -5,3 +5,7 @@ tbody>tr:hover {
 #select-wrapper-driverId {
     width: 100%;
 }
+
+#logo {
+    height: 35px;
+}

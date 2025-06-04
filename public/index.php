@@ -1,13 +1,17 @@
 <?php
 declare(strict_types=1);
+if (parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '/' || parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) === '') {
+    header('Location: index.html');
+    exit;
+}
 require __DIR__.'/../vendor/autoload.php';
 
 use App\Infrastructure\ProjectionDispatcher;
 use App\Event\OrderSubmitted;
 use App\Event\OrderValidated;
 use App\Event\DriverAssigned;
+use App\Event\OrderAccepted;
 use App\Projection\OrderListProjection;
-use App\Projection\DriverAssignmentsProjection;
 
 use App\Infrastructure\CommandBus;
 use App\Infrastructure\QueryBus;
@@ -20,20 +24,29 @@ use App\Query\GetCompaniesQuery;
 
 ProjectionDispatcher::register(OrderSubmitted::class,  [OrderListProjection::class, 'onOrderSubmitted']);
 ProjectionDispatcher::register(OrderValidated::class,  [OrderListProjection::class, 'onOrderValidated']);
-ProjectionDispatcher::register(DriverAssigned::class, [DriverAssignmentsProjection::class, 'onDriverAssigned']);
+ProjectionDispatcher::register(DriverAssigned::class, [OrderListProjection::class, 'onDriverAssigned']);
+ProjectionDispatcher::register(OrderAccepted::class, [OrderListProjection::class, 'onOrderAccepted']);
 
 $commandBus = new CommandBus([
+    'POST:/api/commands/set-user' => [
+        'cmd' => \App\Command\SetUserCommand::class,
+        'handler' => \App\CommandHandler\SetUserHandler::class,
+    ],
     'POST:/api/commands/submit-order' => [
         'cmd' => SubmitOrderCommand::class,
         'handler' => App\CommandHandler\SubmitOrderHandler::class
     ],
-    'POST:/api/commands/assign-driver' => [
-        'cmd' => AssignDriverCommand::class,
-        'handler' => App\CommandHandler\AssignDriverHandler::class
-    ],
     'POST:/api/commands/validate-order' => [
         'cmd' => \App\Command\ValidateOrderCommand::class,
         'handler' => \App\CommandHandler\ValidateOrderHandler::class,
+    ],
+    'POST:/api/commands/accept-offer' => [
+        'cmd' => \App\Command\OrderAcceptedCommand::class,
+        'handler' => \App\CommandHandler\OrderAcceptedHandler::class
+    ],
+    'POST:/api/commands/assign-driver' => [
+        'cmd' => AssignDriverCommand::class,
+        'handler' => App\CommandHandler\AssignDriverHandler::class
     ],
 ]);
 

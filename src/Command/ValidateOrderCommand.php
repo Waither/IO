@@ -3,6 +3,7 @@ namespace App\Command;
 
 class ValidateOrderCommand {
     public function __construct(
-        public string $orderId
+        public string $orderId,
+        public float $price,
     ) {}
 }

@@ -2,7 +2,12 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Demo CQRS – Spedycja</title>
+    <title>GlobaLogix</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="GlobaLogix - System zarządzania zleceniami transportowymi">
+    <meta name="keywords" content="transport, logistyka, zlecenia, kierowcy, spedytorzy">
+    <meta name="author" content="GlobaLogix Team">
+    <link rel="icon" href="logo.png" type="image/x-icon">
     <link rel="stylesheet" href="icons/fontawesome-free-6.7.2-web/css/all.min.css">
     <link rel="stylesheet" href="mdb/css/mdb.min.css">
     <link rel="stylesheet" href="style.css">
@@ -13,13 +18,27 @@
     <nav class="navbar navbar-expand-lg bg-body-tertiary">
         <div class="container-fluid">
             <button data-mdb-collapse-init class="navbar-toggler" type="button" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"><i class="fas fa-bars"></i></button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <div class="collapse navbar-collapse">
+                <a class="navbar-brand mt-2 mt-lg-0 me-0" href="/">
+                    <img id="logo" src="logo.png" alt="Logo" loading="lazy">
+                </a>
+                <ul class="navbar-nav w-100 mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a id="nav-addForm" class="nav-link" href="#" data-target="new-order"><i class="fas fa-circle-plus me-1"></i>Nowe Zlecenie</a>
                     </li>
                     <li class="nav-item">
                         <a id="nav-driver" class="nav-link" href="#" data-target="driver-view"><i class="fas fa-truck me-1"></i>Widok Kierowcy</a>
+                    </li>
+
+                    <li class="nav-item ms-auto me-2">
+                        <div class="input-group">
+                            <span class="input-group-text" style="height: 35.8333px;"><i class="fas fa-user"></i></span>
+                            <select id="select-user" data-mdb-select-init>
+                                <option value="Klient">Klient</option>
+                                <option value="Spedytor">Spedytor</option>
+                                <option value="Kierowca">Kierowca</option>
+                            </select>
+                        </div>
                     </li>
                 </ul>
             </div>

@@ -7,7 +7,7 @@ use App\Event\OrderValidated;
 
 class ValidateOrderHandler {
     public function handle(ValidateOrderCommand $cmd): array {
-        $e = new OrderValidated($cmd->orderId);
+        $e = new OrderValidated($cmd->orderId, $cmd->price);
         EventStore::append($e);
         return ['status' => 'OrderValidated'];
     }

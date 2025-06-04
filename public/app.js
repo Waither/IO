@@ -1,8 +1,26 @@
 import { Input, Autocomplete, Select, Modal, Ripple, Dropdown, Collapse, initMDB } from "./mdb/js/mdb.es.min.js";
-
 initMDB({ Input, Autocomplete, Select, Modal, Ripple, Dropdown, Collapse });
 
 'use strict';
+
+const getCookie = (name) => {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+    return match ? decodeURIComponent(match[2]) : null;
+};
+
+const setCookie = (name, value, days = 7) => {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
+
+const user = (() => {
+    let u = getCookie('user_spedycja');
+    if (!u) {
+        u = "Klient";
+        setCookie('user_spedycja', u);
+    }
+    return u;
+})();
 
 document.addEventListener('DOMContentLoaded', () => {
     loadOrders();
@@ -49,6 +67,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 hideModal();
             };
         });
+    });
+
+    // Select usera
+    const selectUser = document.getElementById('select-user');
+    Select.getInstance(selectUser).setValue(user);
+    selectUser.addEventListener('change', async () => {
+        const userId = selectUser.value;
+        const res = await api('POST', '/api/commands/set-user', { user: userId });
+        log(res);
+        if (res.error) {
+            return;
+        }
+        window.location.reload();
     });
 });
 
@@ -100,12 +131,22 @@ async function detailsOrder(order) {
 
             // Sprawdzenie statusu zlecenia i wykonanie odpowiedniej akcji
             if (order.status === 'Utworzone') {
-                res = await api('POST', '/api/commands/validate-order', { orderId: order.ID_order });
-            }
-            else if (order.status === 'Zatwierdzone przez spedytora') {
                 const data = Object.fromEntries(new FormData(e.target));
                 console.log(data);
+                res = await api('POST', '/api/commands/validate-order', data);
+            }
+            else if (order.status === 'Zatwierdzone przez spedytora' && user === 'Spedytor') {
+                if (select.value === '') {
+                    alert('Proszę wybrać kierowcę.');
+                    return;
+                }
+
+                const data = Object.fromEntries(new FormData(e.target));
                 res = await api('POST', '/api/commands/assign-driver', data);
+            }
+            else if (order.status === 'Zatwierdzone przez spedytora' && user === 'Klient') {
+                const data = Object.fromEntries(new FormData(e.target));
+                res = await api('POST', '/api/commands/accept-offer', data);
             }
 
             log(res);
