@@ -28,7 +28,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('reload-orders').onclick = loadOrders;
 
     // Dodawanie nowego zlecenia
-    document.getElementById("nav-addForm").addEventListener("click", async () => {
+    const addForm  = user !== 'Klient' ? document.getElementById('nav-addForm').parentElement.remove() : document.getElementById('nav-addForm');
+    addForm?.addEventListener("click", async () => {
         showModal("views/addForm.php").then(loadContent).then(() => {
             const autocompleteData = [];
 
