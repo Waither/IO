@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="mdb/css/mdb.min.css">
     <link rel="stylesheet" href="style.css">
     <script src="app.js" type="module"></script>
+    <script src="test-driver-panel.js"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -21,10 +22,12 @@
             <div class="collapse navbar-collapse">
                 <a class="navbar-brand mt-2 mt-lg-0 me-0" href="/">
                     <img id="logo" src="logo.png" alt="Logo" loading="lazy">
-                </a>
-                <ul class="navbar-nav w-100 mb-2 mb-lg-0">
+                </a>                <ul class="navbar-nav w-100 mb-2 mb-lg-0">
                     <li class="nav-item">
                         <a id="nav-addForm" class="nav-link" href="#" data-target="new-order"><i class="fas fa-circle-plus me-1"></i>Nowe Zlecenie</a>
+                    </li>
+                    <li class="nav-item">
+                        <a id="nav-driverPanel" class="nav-link" href="#" data-target="driver-panel"><i class="fas fa-truck me-1"></i>Panel Kierowcy</a>
                     </li>
 
                     <li class="nav-item ms-auto me-2">
@@ -45,9 +48,8 @@
     <main class="p-3">
         <button id="reload-orders" class="btn btn-primary">Odśwież</button>
         <div class="table-responsive">
-            <table class="table table-hover">
-                <thead>
-                    <tr><th>ID</th><th>Status</th><th>Firma</th><th>Miejsce odbioru</th><th>Miejsce dostawy</th><th>Ładunek</th><th>Waga</th><th>Kierowca</th><th>Data utworzenia</th></tr>
+            <table class="table table-hover">                <thead>
+                    <tr><th>ID</th><th>Status</th><th>Firma</th><th>Miejsce odbioru</th><th>Miejsce dostawy</th><th>Ładunek</th><th>Waga</th><th>Kierowca</th><th>Data utworzenia</th><th>Akcje</th></tr>
                 </thead>
                 <tbody id="orders-body"></tbody>
             </table>

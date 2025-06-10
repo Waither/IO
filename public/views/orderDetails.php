@@ -64,9 +64,7 @@
                                 </div>
                             </div>
                             <?php
-                        }
-
-                        if ($order["driver"] != null) {
+                        }                        if ($order["driver"] != null) {
                             ?>
                             <div class="row">
                                 <div class="col-12 mb-2">
@@ -76,6 +74,28 @@
                             </div>
                             <?php
                         }
+                    ?>
+                    
+                    <!-- Sekcja trasy -->
+                    <div id="routeSection" class="row">
+                        <div class="col-12 mb-2">
+                            <h5 class="text-center fw-bold">Informacje o trasie</h5>
+                            <div id="routeInfo" class="text-center p-3 bg-light rounded">
+                                <em>Trasa nie została jeszcze zaplanowana</em>
+                            </div>                            <?php if ($_COOKIE["user_spedycja"] == "Spedytor" && $order["status"] != "Utworzone"): ?>
+                            <div class="text-center mt-2">
+                                <button type="button" class="btn btn-primary me-2" data-action="plan-route" data-order-id="<?= $order['ID_order']; ?>" data-mdb-ripple-init>
+                                    <i class="fas fa-route me-1"></i>Zaplanuj trasę
+                                </button>
+                                <button type="button" class="btn btn-info" data-action="generate-document" data-order-id="<?= $order['ID_order']; ?>" data-mdb-ripple-init>
+                                    <i class="fas fa-file-pdf me-1"></i>Generuj dokument
+                                </button>
+                            </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+
+                    <?php
 
                         if ($_COOKIE["user_spedycja"] == "Spedytor" && $order["status"] == "Utworzone") {
                             ?>

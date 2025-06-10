@@ -193,7 +193,59 @@ CREATE TABLE `status` (
 INSERT INTO `status` (`ID_status`, `name_status`) VALUES
 (1, 'Utworzone'),
 (2, 'Zatwierdzone przez spedytora'),
-(3, 'Zaakceptowane przez klienta');
+(3, 'Zaakceptowane przez klienta'),
+(4, 'W trakcie'),
+(5, 'Pobrano ładunek'),
+(6, 'Dostarczone'),
+(7, 'Anulowane');
+
+-- Dodanie nowych tabel dla rozszerzonej funkcjonalności CQRS
+
+-- Tabela dla tras zleceń
+CREATE TABLE `order_routes` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `order_id` INT(11) NOT NULL,
+  `route` TEXT NOT NULL,
+  `estimated_time` VARCHAR(50) DEFAULT NULL,
+  `estimated_cost` DECIMAL(10,2) DEFAULT NULL,
+  `planned_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_order_route` (`order_id`),
+  FOREIGN KEY (`order_id`) REFERENCES `order_list` (`ID_order`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Tabela dla śledzenia lokalizacji
+CREATE TABLE `order_tracking` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `order_id` INT(11) NOT NULL,
+  `driver_id` INT(11) NOT NULL,
+  `latitude` DECIMAL(10,8) NOT NULL,
+  `longitude` DECIMAL(11,8) NOT NULL,
+  `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_order_tracking` (`order_id`),
+  FOREIGN KEY (`order_id`) REFERENCES `order_list` (`ID_order`) ON DELETE CASCADE,
+  FOREIGN KEY (`driver_id`) REFERENCES `driver` (`ID_driver`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Tabela dla dokumentów
+CREATE TABLE `order_documents` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `order_id` INT(11) NOT NULL,
+  `document_type` VARCHAR(50) NOT NULL,
+  `document_path` VARCHAR(255) NOT NULL,
+  `generated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`order_id`) REFERENCES `order_list` (`ID_order`) ON DELETE CASCADE,
+  INDEX `idx_order_documents` (`order_id`, `document_type`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Rozszerzenie tabeli statusów o nowe statusy
+INSERT INTO `status` (`ID_status`, `name_status`) VALUES
+(4, 'W trakcie dostawy'),
+(5, 'Dostarczone'),
+(6, 'Anulowane');
+
 
 --
 -- Indeksy dla zrzutów tabel
