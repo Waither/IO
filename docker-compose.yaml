@@ -28,7 +28,7 @@ services:
   mysql:
     build:
       context: ./docker/mysql
-    restart: always
+    restart: no
     ports:
       - "3306:3306"
     volumes:
@@ -38,7 +38,7 @@ services:
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    restart: always
+    restart: no
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
