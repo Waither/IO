@@ -1236,12 +1236,11 @@ function setupDriverPanelEventListeners() {
             
             if (selectedOrderId) {
                 console.log(`🔧 Wybrano zlecenie #${selectedOrderId}, uruchamiam test...`);
-                
-                // Sprawdź czy to zlecenie #2 - jeśli tak, uruchom automatyczny test
-                if (selectedOrderId === '2' && typeof window.testOrderZL2WithWait === 'function') {
+                  // Sprawdź czy to zlecenie #2 - jeśli tak, uruchom automatyczną walidację
+                if (selectedOrderId === '2') {
                     setTimeout(() => {
-                        console.log('🔧 Auto-wykonuję test ZL#2 po wyborze z selecta...');
-                        window.testOrderZL2WithWait();
+                        console.log('🔧 Auto-wykonuję walidację ZL#2 po wyborze z selecta...');
+                        validateOrderActions(2);
                     }, 500); // Krótkie opóźnienie aby UI się zaktualizował
                 }
             }
@@ -1292,10 +1291,121 @@ function setupOrderDetailsEventListeners(orderId) {
     });
 }
 
-// Eksport funkcji do testowania (udostępnienie w obiekcie window)
+// Eksport funkcji do użytku globalnego (udostępnienie w obiekcie window)
 window.updateDriverPanelData = updateDriverPanelData;
 window.setupDeliveryActions = setupDeliveryActions;
 window.handleStartDelivery = handleStartDelivery;
 window.handleCompleteDelivery = handleCompleteDelivery;
+window.validateOrderActions = validateOrderActions;
+window.performOrderValidation = performOrderValidation;
 window.showModal = showModal;
 window.api = api;
+
+// Funkcja walidacji akcji dla wybranego zlecenia z progresywnym czekaniem
+async function validateOrderActions(orderId = 2, maxAttempts = 10) {
+    console.log(`🔧 Uruchamiam walidację akcji dla zlecenia #${orderId}...`);
+    
+    for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+        console.log(`📋 Próba ${attempt}/${maxAttempts} - sprawdzam czy panel jest gotowy...`);
+        
+        // Sprawdź czy modal i jego elementy są dostępne
+        const modal = document.getElementById('modalForm');
+        const actionsContainer = document.getElementById('deliveryActions');
+        
+        console.log(`🔍 Modal: ${modal ? '✅ znaleziony' : '❌ nie znaleziony'}`);
+        console.log(`🔍 Actions container: ${actionsContainer ? '✅ znaleziony' : '❌ nie znaleziony'}`);
+        
+        if (modal && actionsContainer) {
+            console.log('✅ Panel akcji znaleziony! Uruchamiam walidację...');
+            await performOrderValidation(orderId);
+            return;
+        }
+        
+        // Sprawdź czy funkcje są dostępne
+        console.log(`🔍 setupDeliveryActions: ${typeof window.setupDeliveryActions}`);
+        console.log(`🔍 updateDriverPanelData: ${typeof window.updateDriverPanelData}`);
+        
+        console.log(`⏳ Panel nie jest jeszcze gotowy (próba ${attempt}), czekam 500ms...`);
+        await new Promise(resolve => setTimeout(resolve, 500));
+    }
+    
+    console.error('❌ Nie udało się znaleźć panelu akcji po wszystkich próbach');
+    console.log('🔍 Ostateczny stan elementów:');
+    console.log('Modal:', document.getElementById('modalForm'));
+    console.log('Actions container:', document.getElementById('deliveryActions'));
+}
+
+// Funkcja wykonująca faktyczną walidację akcji dla zlecenia
+async function performOrderValidation(orderId = 2) {
+    console.log(`=== WALIDACJA AKCJI DLA ZLECENIA #${orderId} ===`);
+    
+    try {
+        // Pobierz dane zlecenia
+        const response = await fetch('/api/queries/orders');
+        const orders = await response.json();
+        const order = orders.find(o => o.ID_order == orderId);
+        
+        if (!order) {
+            console.error(`❌ Nie znaleziono zlecenia #${orderId}`);
+            return;
+        }
+        
+        console.log('📋 Dane zlecenia:', order);
+        console.log('📊 Status:', order.status);
+        
+        // Sprawdź czy panel akcji istnieje
+        const actionsContainer = document.getElementById('deliveryActions');
+        if (!actionsContainer) {
+            console.error('❌ Kontener akcji nie istnieje. Czy jesteś w panelu kierowcy?');
+            return;
+        }
+        
+        // Wykonaj konfigurację akcji dostawy
+        if (typeof window.setupDeliveryActions === 'function') {
+            console.log('🔧 Konfigurowanie akcji dostawy...');
+            
+            // Dodaj normalized status
+            const statusMapping = {
+                'Utworzone': 'pending',
+                'Zatwierdzone przez spedytora': 'approved',
+                'Zaakceptowane przez klienta': 'ready_for_delivery',
+                'W trakcie': 'in_progress',
+                'Pobrano ładunek': 'pickup_completed',
+                'Dostarczone': 'delivered',
+                'Anulowane': 'cancelled'
+            };
+            
+            order.normalizedStatus = statusMapping[order.status] || 'pending';
+            console.log('📊 Normalized status:', order.normalizedStatus);
+            
+            window.setupDeliveryActions(order);
+            
+            // Sprawdź co zostało wygenerowane
+            console.log('🔍 HTML akcji:');
+            console.log(actionsContainer.innerHTML);
+            
+            // Sprawdź przyciski
+            const buttons = actionsContainer.querySelectorAll('button[data-action]');
+            console.log(`🔲 Znaleziono ${buttons.length} przycisków akcji:`);
+            buttons.forEach(btn => {
+                console.log(`  - ${btn.getAttribute('data-action')}: "${btn.textContent.trim()}"`);
+            });
+            
+            // Sprawdź czy dla statusu "Zaakceptowane przez klienta" jest przycisk "Rozpocznij dostawę"
+            if (order.status === 'Zaakceptowane przez klienta') {
+                const startButton = actionsContainer.querySelector('button[data-action="start-delivery"]');
+                if (startButton) {
+                    console.log('✅ Przycisk "Rozpocznij dostawę" wygenerowany dla zlecenia #' + orderId);
+                } else {
+                    console.log('❌ Brak przycisku "Rozpocznij dostawę" dla zlecenia #' + orderId);
+                }
+            }
+            
+        } else {
+            console.error('❌ Funkcja setupDeliveryActions nie jest dostępna');
+        }
+        
+    } catch (error) {
+        console.error('❌ Błąd podczas walidacji:', error);
+    }
+}
