@@ -78,7 +78,7 @@ $commandBus = new CommandBus([
         'handler' => App\CommandHandler\UpdateLocationHandler::class
     ],
     'POST:/api/commands/update-order-status' => [
-        'cmd' => \App\Command\UpdateOrderStatusCommand::class,
+        'cmd' => UpdateOrderStatusCommand::class,
         'handler' => App\CommandHandler\UpdateOrderStatusHandler::class
     ],
     'POST:/api/commands/complete-delivery' => [
